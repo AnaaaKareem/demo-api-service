@@ -133,7 +133,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.region }}
 
-      - name: Deploy Image to EKS
+      - name: Inject Image Registery Secret
         env:
           ACCOUNT_ID: ${{ secrets.ACCOUNT_ID }}
           REGION: ${{ vars.region }}
@@ -142,6 +142,9 @@ jobs:
             --docker-server=${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ vars.region }}.amazonaws.com \
             --docker-username=AWS \
             --docker-password=$(aws ecr get-login-password --region ${{ vars.region }})
+      
+      - name: Deploy to eks
+        run: |
           kubectl apply -f k8s-deployment.yaml
           kubectl apply -f k8s-service.yaml
 
