@@ -65,6 +65,10 @@ jobs:
         with:
           terraform_version: "1.1.7"
 
+      - name: Terraform Init
+        id: init
+        run: terraform init -auto-approve -no-color
+
       - name: Terraform Apply
         id: Apply
         run: terraform apply -auto-approve -no-color
