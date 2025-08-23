@@ -28,14 +28,6 @@ resource "aws_eks_cluster" "task-3-v2" {
   ]
 }
 
-resource "null_resource" "kubeconfig" {
-  provisioner "local-exec" {
-    command = "aws eks update-kubeconfig ${var.region} --name ${aws_eks_cluster.task-3-v2.name}" 
-  }
-
-  depends_on = [ aws_eks_cluster.task-3-v2 ]
-}
-
 resource "aws_eks_addon" "addons" {
   for_each = toset(var.addons)
 
