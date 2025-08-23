@@ -9,5 +9,5 @@ variable "region" {
 
 variable "addons" {
   type = list(string)
-  default = [ "vpc-cni", "kube-proxy", "aws-observability-collector" ]
+  default = [ "vpc-cni", "kube-proxy" ]
 }
