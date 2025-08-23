@@ -67,7 +67,7 @@ jobs:
 
       - name: Terraform Init
         id: init
-        run: terraform init -auto-approve -no-color
+        run: terraform init -backend-config="access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -backend-config="secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}" -input=false
 
       - name: Terraform Apply
         id: Apply
