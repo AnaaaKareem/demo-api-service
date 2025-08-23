@@ -135,6 +135,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.region }}
 
+      - name: Update kube config
+        run: aws eks update-kubeconfig --name ${{ needs.TerraformBuild.outputs.cluster_name }} --region ${{ vars.region }}
+
+
       - name: Inject Image Registery Secret
         env:
           ACCOUNT_ID: ${{ secrets.ACCOUNT_ID }}
