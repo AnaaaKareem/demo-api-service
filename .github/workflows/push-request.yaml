@@ -133,16 +133,19 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.region }}
 
-      - name: Update kube config
-        run: aws eks update-kubeconfig --name ${{ needs.TerraformBuild.outputs.cluster_name }} --region ${{ vars.region }}
-
       - name: Deploy Image to EKS
+        env:
+          ACCOUNT_ID: ${{ secrets.ACCOUNT_ID }}
+          REGION: ${{ vars.region }}
         run: |
+          aws ecr get-login-password --region ${{ vars.region }} | kubectl create secret docker-registry ecr-secret \
+            --docker-server=${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ vars.region }}.amazonaws.com \
+            --docker-username=AWS \
+            --docker-password=$(aws ecr get-login-password --region ${{ vars.region }})
           kubectl apply -f k8s-deployment.yaml
           kubectl apply -f k8s-service.yaml
-          aws ecr get-login-password --region <region> | kubectl create secret docker-registry regcred \
-          --docker-server=<account-id>.dkr.ecr.<region>.amazonaws.com \
-          --docker-username=AWS \
-          --docker-password=$(aws ecr get-login-password --region <region>) \
-          --namespace=<namespace>
+
         continue-on-error: false
+
+      - name: Update kube config
+        run: aws eks update-kubeconfig --name ${{ needs.TerraformBuild.outputs.cluster_name }} --region ${{ vars.region }}

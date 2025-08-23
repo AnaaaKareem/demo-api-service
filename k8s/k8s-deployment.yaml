@@ -19,7 +19,7 @@ spec:
         - name: ecr-secret
       containers:
         - name: node-app
-          image: 326779754677.dkr.ecr.eu-north-1.amazonaws.com/node-app:latest
+          image: "$ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/node-app:latest"
           ports:
             - containerPort: 8080
           resources:
