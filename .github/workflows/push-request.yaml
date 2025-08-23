@@ -140,21 +140,19 @@ jobs:
 
 
       - name: Inject Image Registery Secret
+        run: |
+          kubectl create secret docker-registry ecr-secret \
+            --docker-server=${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ vars.region }}.amazonaws.com \
+            --docker-username=AWS \
+            --docker-password=$(aws ecr get-login-password --region ${{ vars.region }}) \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      
+      - name: Deploy to eks
         env:
           ACCOUNT_ID: ${{ secrets.ACCOUNT_ID }}
           REGION: ${{ vars.region }}
         run: |
-          aws ecr get-login-password --region ${{ vars.region }} | kubectl create secret docker-registry ecr-secret \
-            --docker-server=${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ vars.region }}.amazonaws.com \
-            --docker-username=AWS \
-            --docker-password=$(aws ecr get-login-password --region ${{ vars.region }})
-      
-      - name: Deploy to eks
-        run: |
           kubectl apply -f k8s-deployment.yaml
           kubectl apply -f k8s-service.yaml
-
         continue-on-error: false
-
-      - name: Update kube config
-        run: aws eks update-kubeconfig --name ${{ needs.TerraformBuild.outputs.cluster_name }} --region ${{ vars.region }}
