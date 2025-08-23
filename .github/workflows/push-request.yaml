@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ ServerTest ]
     outputs:
-      node_app_name: ${{ steps.node_app_name_name.outputs.node_app_name }}
+      node_app_name: ${{ steps.node_app_name.outputs.node_app_name }}
       cluster_name: ${{ steps.cluster_name.outputs.cluster_name }}
     env:
       TF_VAR_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
