@@ -1,6 +1,6 @@
 variable "mutability" {
   type    = string
-  default = "IMMUTABLE"
+  default = "MUTABLE"
 }
 
 variable "scan" {
