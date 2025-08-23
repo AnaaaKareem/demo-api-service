@@ -1,0 +1,80 @@
+name: Verify Infrastructure and Image
+
+on:
+  pull_request:
+    branches:
+      - 'main'
+    paths:
+      - 'terraform/**'
+      - '.github/workflows/pull-request.yaml'
+
+jobs:
+
+  TestServer:
+    
+    runs-on: ubuntu-latest
+    
+    defaults:
+     run:
+      working-directory: server
+       
+    
+    # Setup multiple node versions to test
+    strategy:
+      matrix:
+        node: [14, 16, 18, 20]
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Use node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      
+      # Install npm dependencies before build
+      - name: Check Dependencies
+        run:  | 
+          npm ci && \
+          npm cache clean --force
+      - name: Remove Dependencies to build image
+        run: rm -rf node_modules
+  
+  Terraform:
+    
+    runs-on: ubuntu-latest
+    needs: [ TestServer ]
+    
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          path: "terraform"
+      
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.1.7"
+
+      - name: Terraform Fmt
+        id: init
+        run: terraform fmt
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
+
+  BuildImage:
+
+    runs-on: ubuntu-latest
+    needs: Terraform
+    
+    defaults:
+     run:
+      working-directory: server
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Build Docker Image
+        id: build-image
+
+        run: docker build .
