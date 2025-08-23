@@ -76,7 +76,7 @@ jobs:
 
       - name: Terraform Node App Name
         id: node_app_name
-        run: echo "node_app_name=$(terraform output -raw node-app-name)" >> $GITHUB_OUTPUT
+        run: echo "node_app_name=$(terraform output -raw node_app_name)" >> $GITHUB_OUTPUT
 
       - name: Terraform Cluster Name
         id: cluster_name

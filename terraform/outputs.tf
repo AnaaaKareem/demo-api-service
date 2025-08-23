@@ -19,7 +19,3 @@ output "cluster_name" {
 output "db_endpoint" {
   value = module.rds.rds_endpoint
 }
-
-output "kubeconfig" {
-  value = module.eks.kubeconfig
-}
