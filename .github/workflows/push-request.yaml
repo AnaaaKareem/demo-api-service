@@ -145,7 +145,7 @@ jobs:
             --docker-server=${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ vars.region }}.amazonaws.com \
             --docker-username=AWS \
             --docker-password=$(aws ecr get-login-password --region ${{ vars.region }}) \
-            --dry-run=client -o yaml | kubectl apply -f - --validate=false
+            --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Deploy to eks
         env:
