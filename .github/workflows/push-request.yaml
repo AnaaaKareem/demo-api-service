@@ -153,6 +153,6 @@ jobs:
           REGION: ${{ vars.region }}
         run: |
           echo "Using ACCOUNT_ID=$ACCOUNT_ID REGION=$AWS_REGION"
-          envsubst < k8s/deployment.yaml | kubectl apply -f -
+          envsubst < deployment.yaml | kubectl apply -f -
           kubectl apply -f k8s-service.yaml
         continue-on-error: false
