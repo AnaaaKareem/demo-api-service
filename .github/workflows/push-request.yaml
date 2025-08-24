@@ -50,6 +50,8 @@ jobs:
     outputs:
       node_app_name: ${{ steps.node_app_name.outputs.node_app_name }}
       cluster_name: ${{ steps.cluster_name.outputs.cluster_name }}
+      db_username: ${{ steps.cluster_name.outputs.db_username }}
+      db_password: ${{ steps.cluster_name.outputs.db_password }}
     env:
       TF_VAR_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
       TF_VAR_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -81,6 +83,14 @@ jobs:
       - name: Terraform Cluster Name
         id: cluster_name
         run: echo "cluster_name=$(terraform output -raw cluster_name)" >> $GITHUB_OUTPUT
+
+      - name: Terraform DB Username
+        id: db_username
+        run: echo "db_username=$(terraform output -raw db_uname)" >> $GITHUB_OUTPUT
+
+      - name: Terraform DB Password
+        id: db_password
+        run: echo "db_password=$(terraform output -raw db_pass)" >> $GITHUB_OUTPUT
 
   ImageBuildAndPublish:
 
@@ -138,6 +148,13 @@ jobs:
 
       - name: Update kube config
         run: aws eks update-kubeconfig --name ${{ needs.TerraformBuild.outputs.cluster_name }} --region ${{ vars.region }}
+
+      - name: Inject DB Secret
+        run: |
+          kubectl create secret generic db-credentials \
+            --from-literal=username=${{ needs.TerraformBuild.outputs.db_username }} \
+            --from-literal=password=${{ needs.TerraformBuild.outputs.db_password }}
+
 
       - name: Inject Image Registery Secret
         run: |
