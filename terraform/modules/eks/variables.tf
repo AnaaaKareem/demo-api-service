@@ -11,3 +11,7 @@ variable "addons" {
   type = list(string)
   default = [ "vpc-cni", "kube-proxy" ]
 }
+
+variable "vpc_id" {
+  type = string
+}
