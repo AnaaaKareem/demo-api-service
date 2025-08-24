@@ -16,4 +16,6 @@ app.get('/health', (req, res) => {
     });
 });
 
-app.listen(PORT, () => console.log(`It's alive on http://localhost:${PORT}`));
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
