@@ -137,3 +137,19 @@ resource "aws_iam_role_policy_attachment" "AmazonEC2ContainerRegistryReadOnly" {
   role       = aws_iam_role.eks-node.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
 }
+
+resource "aws_eks_access_entry" "karim" {
+  cluster_name  = aws_eks_cluster.task-3-v2.name
+  principal_arn = "arn:aws:iam::326779754677:user/karim.khater@vodafone.com"
+  type          = "STANDARD"
+}
+
+resource "aws_eks_access_policy_association" "karim_admin" {
+  cluster_name  = aws_eks_cluster.task-3-v2.name
+  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+  access_scope {
+    type = "cluster"
+  }
+  principal_arn = "arn:aws:iam::326779754677:user/karim.khater@vodafone.com"
+}
+
