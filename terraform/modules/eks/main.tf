@@ -26,6 +26,42 @@ vpc_id = var.vpc_id
   }
 }
 
+resource "aws_iam_role" "eks-cluster" {
+  name = "eks-cluster-karim"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "sts:AssumeRole",
+          "sts:TagSession"
+        ]
+        Effect = "Allow"
+        Principal = {
+          Service = "eks.amazonaws.com"
+        }
+      },
+    ]
+  })
+}
+
+resource "aws_iam_role" "eks-node" {
+  name = "eks-node-karim"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
+}
+
+
 resource "aws_eks_cluster" "task-3-v2" {
   name     = "Task-Three-v2"
   role_arn = aws_iam_role.eks-cluster.arn
@@ -55,7 +91,7 @@ resource "aws_eks_addon" "addons" {
   addon_name   = each.value
 }
 
-resource "aws_eks_node_group" "eks-node" {
+resource "aws_eks_node_group" "node" {
   cluster_name    = aws_eks_cluster.task-3-v2.name
   node_group_name = "node"
   node_role_arn   = aws_iam_role.eks-node.arn
@@ -80,24 +116,7 @@ resource "aws_eks_node_group" "eks-node" {
 }
 
 
-resource "aws_iam_role" "eks-cluster" {
-  name = "eks-cluster-karim"
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = [
-          "sts:AssumeRole",
-          "sts:TagSession"
-        ]
-        Effect = "Allow"
-        Principal = {
-          Service = "eks.amazonaws.com"
-        }
-      },
-    ]
-  })
-}
+
 
 resource "aws_iam_role_policy_attachment" "cluster_AmazonEKSClusterPolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
